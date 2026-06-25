@@ -184,3 +184,15 @@ from mc_skin_utils.mc_voxel_texture_resolver import highlight_diff
 # Saves a new image where any differing pixels are colored pure red
 highlight_diff("skin_v1.png", "skin_v2.png", "diff_output.png")
 ```
+
+### Cleaning Extra Artifact Pixels
+Remove invalid or "extra" pixels from a skin that lie outside the standard Minecraft UV layout.
+
+```python
+from PIL import Image
+from mc_skin_utils.clean_skins_extra_pixels import clean_skin
+
+skin_img = Image.open("messy_skin.png")
+cleaned_skin_img = clean_skin(skin_img)
+cleaned_skin_img.save("cleaned_skin.png")
+```

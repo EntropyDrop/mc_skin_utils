@@ -16,20 +16,6 @@ from PIL import Image
 import pyvista as pv
 from .mc_voxel_texture_resolver import resolve_voxel_consistency
 
-def load_skin(path: str) -> np.ndarray:
-    """Load a Minecraft skin image and convert to numpy array."""
-    img = Image.open(path).convert("RGBA")
-    # Minecraft skins are either 64x64 (new format) or 64x32 (legacy format)
-    if img.size == (64, 32):
-        new_img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-        new_img.paste(img, (0, 0))
-        # Copy right leg to left leg
-        new_img.paste(img.crop((0, 16, 16, 32)), (16, 48))
-        # Copy right arm to left arm
-        new_img.paste(img.crop((40, 16, 56, 32)), (32, 48))
-        img = new_img
-    img = resolve_voxel_consistency(img)
-    return np.array(img)
 
 def get_uv_face(skin: np.ndarray, u: int, v: int, w: int, h: int, flip_h: bool = False, flip_v: bool = False) -> np.ndarray:
     """Extract a face texture from the skin."""
@@ -579,7 +565,7 @@ def build_minecraft_model(
     return head_mesh, body_mesh, l_arm_mesh,r_arm_mesh,  l_leg_mesh,r_leg_mesh,  hat_mesh, jacket_mesh, ls_mesh, rs_mesh, lp_mesh, rp_mesh
 
 def render_skin(
-    skin: np.ndarray, 
+    skin: Image.Image, 
     output_size: tuple=(300,300),
     cam_front: tuple = (0.5, 0.5, 0.5),
     use_voxels: bool = True, 
@@ -604,10 +590,11 @@ def render_skin(
     show_wireframe: bool = False,
     off_screen: bool = True,
 ):
+    skin_arr = np.array(skin.convert("RGBA"))
     if rot_args is None: rot_args = {}
     
     # Build models
-    head, body, l_arm, r_arm, l_leg, r_leg, hat, jacket, ls, rs, lp, rp = build_minecraft_model(skin, hl=hl,hl_direction=hl_direction,hl_depth=hl_depth, core_display=core_display, decor_display=decor_display, use_voxels=use_voxels, pos_args=pos_args, **rot_args)
+    head, body, l_arm, r_arm, l_leg, r_leg, hat, jacket, ls, rs, lp, rp = build_minecraft_model(skin_arr, hl=hl,hl_direction=hl_direction,hl_depth=hl_depth, core_display=core_display, decor_display=decor_display, use_voxels=use_voxels, pos_args=pos_args, **rot_args)
     
     # Initialize Plotter
     plotter = pv.Plotter(off_screen=off_screen, window_size=output_size)
@@ -819,10 +806,14 @@ def main():
     if args.pos_leg_right: pos_args['right_leg'] = tuple(args.pos_leg_right)
     if args.pos_leg_left: pos_args['left_leg'] = tuple(args.pos_leg_left)
     
-    skin = load_skin(args.skin_path)
+    from .ensure_skin64x64 import convert_skin_64x32_to_64x64
+    
+    skin_img = Image.open(args.skin_path).convert("RGBA")
+    skin_img = convert_skin_64x32_to_64x64(skin_img)
+    skin_img = resolve_voxel_consistency(skin_img)
 
     render_skin(
-        skin, 
+        skin_img, 
         cam_front=args.cam_front, 
         output_size=args.output_size, 
         use_voxels=not args.flat, 

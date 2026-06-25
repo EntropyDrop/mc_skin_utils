@@ -115,3 +115,37 @@ If you'd like to build the project as a `.whl` or `.tar.gz` for PyPI distributio
 pip install build
 python -m build
 ```
+
+## Python API Usage
+
+You can also import and use the core functions directly in your own Python projects.
+
+### Rendering Skins in Python
+```python
+from mc_skin_utils.mc_render import load_skin, render_skin
+
+# 1. Load the skin as a numpy array (automatically converts 64x32 to 64x64 internally)
+skin_array = load_skin("path/to/skin.png")
+
+# 2. Render and save the skin without opening a GUI
+render_skin(
+    skin_array,
+    save_path="output.png",
+    output_size=(800, 800),
+    light=True,
+    off_screen=True,            # Set to False to open an interactive window
+    rot_args={
+        "rot_head": (10, -20, 0),
+        "rot_arm_right": (0, 0, 45),
+        "rot_arm_left": (0, 0, -45)
+    }
+)
+```
+
+### Converting Legacy Skins in Python
+```python
+from mc_skin_utils.ensure_skin64x64 import convert_skin_64x32_to_64x64
+
+# Converts a legacy 64x32 skin to modern 64x64 format
+convert_skin_64x32_to_64x64("legacy_skin.png", "modern_skin.png")
+```

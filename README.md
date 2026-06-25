@@ -175,15 +175,6 @@ resolved_img = resolve_voxel_consistency(skin_img)
 resolved_img.save("resolved_skin.png")
 ```
 
-### Generating Image Diff Masks
-Utility to highlight the pixel differences between two images (useful for comparing skins).
-
-```python
-from mc_skin_utils.mc_voxel_texture_resolver import highlight_diff
-
-# Saves a new image where any differing pixels are colored pure red
-highlight_diff("skin_v1.png", "skin_v2.png", "diff_output.png")
-```
 
 ### Cleaning Extra Artifact Pixels
 Remove invalid or "extra" pixels from a skin that lie outside the standard Minecraft UV layout.

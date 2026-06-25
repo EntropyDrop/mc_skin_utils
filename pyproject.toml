@@ -23,3 +23,6 @@ mc_skin_utils = "mc_skin_utils.cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["mc_skin_utils*"]
+
+[tool.setuptools.package-data]
+mc_skin_utils = ["*.png"]

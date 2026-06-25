@@ -31,22 +31,20 @@ def copy_mirrored_limb(img, new_img, src_x, src_y, dst_x, dst_y):
     left_face = img.crop((src_x + 8, src_y + 4, src_x + 12, src_y + 16))
     new_img.paste(left_face.transpose(Image.FLIP_LEFT_RIGHT), (dst_x, dst_y + 4))
 
-def convert_skin_64x32_to_64x64(input_path, output_path):
-    print(f"[*] Loading skin: {input_path}")
-    img = Image.open(input_path).convert("RGBA")
+def convert_skin_64x32_to_64x64(img: Image.Image) -> Image.Image:
+    """
+    Converts a legacy 64x32 Minecraft skin to the modern 64x64 format.
+    If the image is already 64x64, it returns a copy.
+    """
+    img = img.convert("RGBA")
     
     # Verify dimensions
     if img.size == (64, 64):
-        print(f"[*] Skin '{input_path}' is already 64x64. No conversion needed.")
-        if input_path != output_path:
-            img.save(output_path)
-            print(f"[+] Saved copy to: {output_path}")
-        return
+        return img.copy()
         
     if img.size != (64, 32):
         raise ValueError(f"Unsupported skin dimensions: {img.size}. Expected 64x32 legacy skin.")
         
-    print("[*] Converting legacy 64x32 skin to modern 64x64 format...")
     # Create empty 64x64 transparent canvas
     new_img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
     
@@ -59,9 +57,7 @@ def convert_skin_64x32_to_64x64(input_path, output_path):
     # Mirror Right Arm (40, 16) to Left Arm (32, 48)
     copy_mirrored_limb(img, new_img, src_x=40, src_y=16, dst_x=32, dst_y=48)
     
-    # Save the output image
-    new_img.save(output_path)
-    print(f"[+] Converted successfully. Modern 64x64 skin saved to: {output_path}")
+    return new_img
 
 def main():
     parser = argparse.ArgumentParser(description="Convert legacy 64x32 Minecraft skins to modern 64x64 format.")
@@ -79,7 +75,19 @@ def main():
         output_path = f"{base}_64x64{ext or '.png'}"
 
     try:
-        convert_skin_64x32_to_64x64(args.input_skin, output_path)
+        print(f"[*] Loading skin: {args.input_skin}")
+        img = Image.open(args.input_skin)
+        
+        if img.size == (64, 64):
+            print(f"[*] Skin '{args.input_skin}' is already 64x64. No conversion needed.")
+            if args.input_skin != output_path:
+                img.save(output_path)
+                print(f"[+] Saved copy to: {output_path}")
+        else:
+            print("[*] Converting legacy 64x32 skin to modern 64x64 format...")
+            new_img = convert_skin_64x32_to_64x64(img)
+            new_img.save(output_path)
+            print(f"[+] Converted successfully. Modern 64x64 skin saved to: {output_path}")
     except Exception as e:
         print(f"[!] Error: {e}")
         sys.exit(1)

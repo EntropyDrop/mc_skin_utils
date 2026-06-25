@@ -144,10 +144,13 @@ render_skin(
 
 ### Converting Legacy Skins in Python
 ```python
+from PIL import Image
 from mc_skin_utils.ensure_skin64x64 import convert_skin_64x32_to_64x64
 
+skin_img = Image.open("legacy_skin.png")
 # Converts a legacy 64x32 skin to modern 64x64 format
-convert_skin_64x32_to_64x64("legacy_skin.png", "modern_skin.png")
+modern_skin = convert_skin_64x32_to_64x64(skin_img)
+modern_skin.save("modern_skin.png")
 ```
 
 ### Converting Slim (Alice) Skins to Classic (Steve) Skins

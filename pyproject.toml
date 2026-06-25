@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mc_skin_utils"
+version = "0.1.0"
+authors = [
+  { name="EntropyDrop" },
+]
+description = "Minecraft Skin Utilities"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "numpy",
+    "Pillow",
+    "pyvista"
+]
+
+[project.scripts]
+mc-render = "mc_skin_utils.mc_render:main"
+clean-skins = "mc_skin_utils.clean_skins_extra_pixels:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mc_skin_utils*"]

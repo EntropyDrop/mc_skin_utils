@@ -1,0 +1,42 @@
+name: Publish Python Package to PyPI
+
+on:
+  push:
+    # 推荐：只在打上 v 开头的 tag 时触发发布（例如 v0.1.0）
+    tags:
+      - 'v*'
+    # 如果你真的想要每次推送到 main 分支都发布，可以取消注释下面这两行，
+    # 但请注意：PyPI 不允许覆盖已有的版本号，所以每次 push 前都必须修改 pyproject.toml 中的 version。
+    # branches:
+    #   - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    
+    # 授权 OIDC (用于 PyPI 的 Trusted Publisher，无需手动配置账号密码)
+    permissions:
+      id-token: write
+      contents: read
+      
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x" # 使用最新的 Python 3 构建，纯 Python 包 (pure-python) 兼容所有版本
+          
+      - name: Install build tools
+        run: python -m pip install --upgrade pip build
+        
+      - name: Build package (sdist and wheel)
+        run: python -m build
+        
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # 如果你在 PyPI 配置了 Trusted Publisher，就无需密码。
+          # 否则，你需要取消注释并配置 GitHub Secrets:
+          # password: ${{ secrets.PYPI_API_TOKEN }}

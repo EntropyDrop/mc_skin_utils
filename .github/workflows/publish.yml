@@ -36,7 +36,6 @@ jobs:
         
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          # 如果你在 PyPI 配置了 Trusted Publisher，就无需密码。
-          # 否则，你需要取消注释并配置 GitHub Secrets:
-          # password: ${{ secrets.PYPI_API_TOKEN }}
+        # 如果你不使用 Trusted Publisher，请取消下方注释并配置 GitHub Secrets:
+        # with:
+        #   password: ${{ secrets.PYPI_API_TOKEN }}

@@ -20,7 +20,7 @@ dependencies = [
 [project.scripts]
 mc-render = "mc_skin_utils.mc_render:main"
 clean-skins = "mc_skin_utils.clean_skins_extra_pixels:main"
-convert-skin = "mc_skin_utils.convert_skin:main"
+ensure-skin64x64 = "mc_skin_utils.ensure_skin64x64:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

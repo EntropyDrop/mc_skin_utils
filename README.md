@@ -23,3 +23,10 @@ Cleans up extra pixels on skins in a `skins` folder based on valid masks.
 ```bash
 clean-skins
 ```
+
+### convert-skin
+Converts legacy 64x32 skins to modern 64x64 format.
+
+```bash
+convert-skin legacy_skin.png -o modern_skin.png
+```

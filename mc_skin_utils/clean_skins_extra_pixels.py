@@ -33,6 +33,26 @@ def clean_skin(skin_img: Image.Image) -> Image.Image:
         
     return Image.fromarray(arr_skin, "RGBA")
 
+def validate_base_layer(skin_img: Image.Image) -> bool:
+    """
+    Checks if the skin's base layer (head, body, arms, legs) has any transparent pixels.
+    Returns True if the base layer is completely opaque (valid), False if it has missing pixels (holes).
+    """
+    arr_mask1, _ = get_masks()
+    arr_skin = np.array(skin_img.convert("RGBA"))
+
+    if arr_skin.shape[:2] != arr_mask1.shape[:2]:
+        if arr_skin.shape[:2] == (32, 64): # 64x32 skin
+            current_base_mask = arr_mask1[:32, :]
+        else:
+            raise ValueError(f"Unexpected size {skin_img.size}")
+    else:
+        current_base_mask = arr_mask1
+        
+    # Check if skin has transparent pixels (alpha == 0) where the base mask is present (alpha > 0)
+    holes = (current_base_mask[:, :, 3] > 0) & (arr_skin[:, :, 3] == 0)
+    return not bool(holes.any())
+
 def main(skins_dir=None):
     if skins_dir is None:
         skins_dir = os.path.join(os.getcwd(), "skins")

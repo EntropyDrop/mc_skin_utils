@@ -197,3 +197,17 @@ skin_img = Image.open("messy_skin.png")
 cleaned_skin_img = clean_skin(skin_img)
 cleaned_skin_img.save("cleaned_skin.png")
 ```
+
+### Validating Skin Base Layer Opacity
+Check if the base layer (head, body, arms, legs) of a skin has any missing (transparent) pixels. Minecraft requires the base layer to be completely opaque.
+
+```python
+from PIL import Image
+from mc_skin_utils.clean_skins_extra_pixels import validate_base_layer
+
+skin_img = Image.open("skin.png")
+is_valid = validate_base_layer(skin_img)
+
+if not is_valid:
+    print("Warning: The skin has transparent holes in its base layer!")
+```

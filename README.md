@@ -203,7 +203,7 @@ Check if the base layer (head, body, arms, legs) of a skin has any missing (tran
 
 ```python
 from PIL import Image
-from mc_skin_utils.clean_skins_extra_pixels import validate_base_layer
+from mc_skin_utils.validator import validate_base_layer
 
 skin_img = Image.open("skin.png")
 is_valid = validate_base_layer(skin_img)

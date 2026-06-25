@@ -43,13 +43,39 @@ mc-render skin.png \
 ```
 
 **Options:**
+
+*General & Output:*
+- `skin_path` (positional): Path to the Minecraft skin image.
 - `--interact`: Open an interactive GUI window instead of rendering off-screen.
 - `--save <path>`: Save a screenshot to the specified file.
-- `--flat`: Render the secondary (overlay) layer as flat planes instead of voxels.
-- `--light`: Enable realistic lighting (otherwise unlit flat shading).
-- `--wireframe`: Show wireframe edges on the skin geometry.
-- `--rot-head`, `--rot-arm-left`, `--rot-leg-right`, etc.: Set rotation angles (pitch, yaw, roll).
-- `--cam-front`: Set camera direction (e.g., `0.5 0.5 0.5`).
+- `--output-size <width> <height>`: Set output image dimensions (default: `600 600`).
+- `--bg <r> <g> <b>`: Set background color as RGB values from 0.0 to 1.0 (default: `0.0039 0.996 0.0039` / green).
+
+*Rendering Styles:*
+- `--flat`: Render the secondary (overlay/armor) layer as flat planes instead of full 3D voxels.
+- `--ortho`: Use orthographic camera projection instead of perspective.
+- `--wireframe`: Show wireframe black edges on the skin geometry.
+- `--light`: Enable realistic lighting. If not set, rendering uses unlit flat texture shading.
+
+*Lighting Configuration (Requires `--light`):*
+- `--light-pos <x> <y> <z>`: Initial light position (default: `0 30 30`).
+- `--light-intensity <float>`: Initial light intensity (default: `0.5`).
+
+*Camera:*
+- `--cam-front <x> <y> <z>`: Set the camera's front direction vector (default: `0.5 0.5 0.5`).
+
+*Posing (Rotations & Positions):*
+- `--rot-head <pitch> <yaw> <roll>`: Rotate the head (degrees).
+- `--rot-arm-left <pitch> <yaw> <roll>`: Rotate the left arm.
+- `--rot-arm-right <pitch> <yaw> <roll>`: Rotate the right arm.
+- `--rot-leg-left <pitch> <yaw> <roll>`: Rotate the left leg.
+- `--rot-leg-right <pitch> <yaw> <roll>`: Rotate the right leg.
+- `--pos-head <x> <y> <z>`: Override head position.
+- `--pos-body <x> <y> <z>`: Override body position.
+- `--pos-arm-left <x> <y> <z>`: Override left arm position.
+- `--pos-arm-right <x> <y> <z>`: Override right arm position.
+- `--pos-leg-left <x> <y> <z>`: Override left leg position.
+- `--pos-leg-right <x> <y> <z>`: Override right leg position.
 
 ---
 

@@ -149,3 +149,38 @@ from mc_skin_utils.ensure_skin64x64 import convert_skin_64x32_to_64x64
 # Converts a legacy 64x32 skin to modern 64x64 format
 convert_skin_64x32_to_64x64("legacy_skin.png", "modern_skin.png")
 ```
+
+### Converting Slim (Alice) Skins to Classic (Steve) Skins
+```python
+from PIL import Image
+from mc_skin_utils.alice_to_steve import alice_to_steve
+
+# Load a slim (3-pixel arm) skin
+skin_img = Image.open("slim_skin.png").convert("RGBA")
+
+# Convert to classic (4-pixel arm) skin in-place (modifies the PIL Image)
+classic_skin_img = alice_to_steve(skin_img)
+classic_skin_img.save("classic_skin.png")
+```
+
+### Resolving Voxel Consistency
+When skin decor textures are missing on certain faces, this function infers and fills them in using adjacent faces to ensure the 3D voxel representation has no holes.
+
+```python
+from PIL import Image
+from mc_skin_utils.mc_voxel_texture_resolver import resolve_voxel_consistency
+
+skin_img = Image.open("skin.png").convert("RGBA")
+resolved_img = resolve_voxel_consistency(skin_img)
+resolved_img.save("resolved_skin.png")
+```
+
+### Generating Image Diff Masks
+Utility to highlight the pixel differences between two images (useful for comparing skins).
+
+```python
+from mc_skin_utils.mc_voxel_texture_resolver import highlight_diff
+
+# Saves a new image where any differing pixels are colored pure red
+highlight_diff("skin_v1.png", "skin_v2.png", "diff_output.png")
+```

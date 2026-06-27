@@ -608,27 +608,27 @@ def render_skin(
     if show_wireframe:
         mesh_kwargs["edge_color"] = "black"
 
-    if "head" in core_display:
+    if "head" in core_display and head:
         plotter.add_mesh(head, opacity=core_opacity, **mesh_kwargs)
     if "head" in decor_display and hat:
         plotter.add_mesh(hat, opacity=decore_opacity, **mesh_kwargs)
-    if "body" in core_display:
+    if "body" in core_display and body:
         plotter.add_mesh(body, opacity=core_opacity, **mesh_kwargs)
     if "body" in decor_display and jacket:
         plotter.add_mesh(jacket, opacity=decore_opacity, **mesh_kwargs)
-    if "right_arm" in core_display:
+    if "right_arm" in core_display and r_arm:
         plotter.add_mesh(r_arm, opacity=core_opacity, **mesh_kwargs)
     if "right_arm" in decor_display and rs:
         plotter.add_mesh(rs, opacity=decore_opacity, **mesh_kwargs)
-    if "left_arm" in core_display:
+    if "left_arm" in core_display and l_arm:
         plotter.add_mesh(l_arm, opacity=core_opacity, **mesh_kwargs)
     if "left_arm" in decor_display and ls:
         plotter.add_mesh(ls, opacity=decore_opacity, **mesh_kwargs)
-    if "right_leg" in core_display:
+    if "right_leg" in core_display and r_leg:
         plotter.add_mesh(r_leg, opacity=core_opacity, **mesh_kwargs)
     if "right_leg" in decor_display and rp:
         plotter.add_mesh(rp, opacity=decore_opacity, **mesh_kwargs)
-    if "left_leg" in core_display:
+    if "left_leg" in core_display and l_leg:
         plotter.add_mesh(l_leg, opacity=core_opacity, **mesh_kwargs)
     if "left_leg" in decor_display and lp:
         plotter.add_mesh(lp, opacity=decore_opacity, **mesh_kwargs)

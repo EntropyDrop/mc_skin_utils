@@ -19,6 +19,7 @@ dependencies = [
 
 [project.scripts]
 mc_skin_utils = "mc_skin_utils.cli:main"
+mc_preview = "mc_skin_utils.mc_preview:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

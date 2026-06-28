@@ -189,12 +189,20 @@ resolved_img.save("resolved_skin.png")
 ### Cleaning Extra Artifact Pixels
 Remove invalid or "extra" pixels from a skin that lie outside the standard Minecraft UV layout.
 
+By default, it will automatically detect if it is an Alex (slim) or Steve (classic) skin. You can also explicitly specify it via `is_alex`.
+
 ```python
 from PIL import Image
 from mc_skin_utils.clean_skins_extra_pixels import clean_skin
 
 skin_img = Image.open("messy_skin.png")
+
+# Auto-detect model type and clean extra pixels
 cleaned_skin_img = clean_skin(skin_img)
+
+# Or explicitly pass the model type
+cleaned_skin_img_explicit = clean_skin(skin_img, is_alex=True)
+
 cleaned_skin_img.save("cleaned_skin.png")
 ```
 

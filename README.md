@@ -198,16 +198,40 @@ cleaned_skin_img = clean_skin(skin_img)
 cleaned_skin_img.save("cleaned_skin.png")
 ```
 
+### Detecting Skin Model (Steve vs Alex)
+You can detect if a skin uses the classic Steve model (4-pixel arms) or the slim Alex model (3-pixel arms).
+
+```python
+from PIL import Image
+from mc_skin_utils.validator import is_alex
+
+skin_img = Image.open("skin.png")
+is_slim = is_alex(skin_img)
+
+if is_slim:
+    print("This is an Alex (slim) skin.")
+else:
+    print("This is a Steve (classic) skin.")
+```
+
 ### Validating Skin Base Layer Opacity
 Check if the base layer (head, body, arms, legs) of a skin has any missing (transparent) pixels. Minecraft requires the base layer to be completely opaque.
+
+By default, the validation will automatically detect the model type (Steve vs Alex). You can also explicitly pass `is_alex` if you already know the model type.
 
 ```python
 from PIL import Image
 from mc_skin_utils.validator import validate_base_layer
 
 skin_img = Image.open("skin.png")
+
+# Auto-detect model type during validation
 is_valid = validate_base_layer(skin_img)
+
+# Or explicitly pass the model type
+is_valid_explicit = validate_base_layer(skin_img, is_alex=True)
 
 if not is_valid:
     print("Warning: The skin has transparent holes in its base layer!")
 ```
+

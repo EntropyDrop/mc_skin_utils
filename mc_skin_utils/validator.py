@@ -26,11 +26,13 @@ def is_alex(skin_img: Image.Image) -> bool:
     except IndexError:
         return False
 
-def validate_base_layer(skin_img: Image.Image) -> bool:
+_detect_is_alex = is_alex
+
+def validate_base_layer(skin_img: Image.Image, is_alex: bool = None) -> bool:
     """
     Checks if the skin's base layer (head, body, arms, legs) has any transparent pixels.
     Returns True if the base layer is completely opaque (valid), False if it has missing pixels (holes).
-    Automatically adjusts validation boundaries if it detects an Alex (slim) model.
+    Automatically adjusts validation boundaries if it detects or is told it is an Alex (slim) model.
     """
     arr_mask = get_base_mask()
     arr_skin = np.array(skin_img.convert("RGBA"))
@@ -43,8 +45,11 @@ def validate_base_layer(skin_img: Image.Image) -> bool:
     else:
         current_base_mask = arr_mask.copy()
         
+    # Determine whether to use Alex model adjustment
+    use_alex = is_alex if is_alex is not None else _detect_is_alex(skin_img)
+
     # If it is Alex (slim) model, adjust mask for 3-pixel arms
-    if is_alex(skin_img):
+    if use_alex:
         # Adjust Right Arm (v: 16..31, u: 40..55)
         # Clear unused/transparent pixels in slim model arm layout
         current_base_mask[16:32, 47] = 0
@@ -65,3 +70,4 @@ def validate_base_layer(skin_img: Image.Image) -> bool:
     # Check if skin has transparent pixels (alpha == 0) where the base mask is present (alpha > 0)
     holes = (current_base_mask[:, :, 3] > 0) & (arr_skin[:, :, 3] == 0)
     return not bool(holes.any())
+

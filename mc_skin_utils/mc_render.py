@@ -388,7 +388,8 @@ def build_minecraft_model(
     rot_arm_left: tuple = (0, 0, 0),
     rot_leg_right: tuple = (0, 0, 0),
     rot_leg_left: tuple = (0, 0, 0),
-    pos_args: dict = None
+    pos_args: dict = None,
+    offset_args: dict = None
 ) -> list:
     """Build the model components."""
     scale = 1.0
@@ -408,6 +409,11 @@ def build_minecraft_model(
     pos_args = pos_args or {}
     positions = {part: pos_args.get(part, def_pos) for part, def_pos in default_positions.items()}
 
+    offset_args = offset_args or {}
+    for part in positions:
+        if part in offset_args:
+            positions[part] = tuple(np.array(positions[part]) + np.array(offset_args[part]))
+
     pivots = {
         'head': (0, 24 * scale, 0),
         'right_arm': (-6 * scale, 24 * scale, 0),
@@ -421,6 +427,11 @@ def build_minecraft_model(
         if part in pos_args:
             offset = np.array(pos_args[part]) - np.array(default_positions[part])
             pivots[part] = tuple(np.array(pivots[part]) + offset)
+
+    # Adjust pivots based on offset override
+    for part in pivots:
+        if part in offset_args:
+            pivots[part] = tuple(np.array(pivots[part]) + np.array(offset_args[part]))
 
     def apply_rotation(mesh, angles, pivot):
         if not angles or all(a == 0 for a in angles):
@@ -572,6 +583,7 @@ def render_skin(
     ortho: bool = False,
     rot_args: dict = None,
     pos_args: dict = None,
+    offset_args: dict = None,
     save_path: str = None,
     bg: list = [1, 1, 1],
     light = False,
@@ -594,7 +606,18 @@ def render_skin(
     if rot_args is None: rot_args = {}
     
     # Build models
-    head, body, l_arm, r_arm, l_leg, r_leg, hat, jacket, ls, rs, lp, rp = build_minecraft_model(skin_arr, hl=hl,hl_direction=hl_direction,hl_depth=hl_depth, core_display=core_display, decor_display=decor_display, use_voxels=use_voxels, pos_args=pos_args, **rot_args)
+    head, body, l_arm, r_arm, l_leg, r_leg, hat, jacket, ls, rs, lp, rp = build_minecraft_model(
+        skin_arr, 
+        hl=hl,
+        hl_direction=hl_direction,
+        hl_depth=hl_depth, 
+        core_display=core_display, 
+        decor_display=decor_display, 
+        use_voxels=use_voxels, 
+        pos_args=pos_args, 
+        offset_args=offset_args,
+        **rot_args
+    )
     
     # Initialize Plotter
     plotter = pv.Plotter(off_screen=off_screen, window_size=output_size)
@@ -782,6 +805,13 @@ def main():
     parser.add_argument("--pos-leg-right", type=float, nargs=3, help="Right leg position")
     parser.add_argument("--pos-leg-left", type=float, nargs=3, help="Left leg position")
     
+    parser.add_argument("--offset-head", type=float, nargs=3, help="Head offset (x y z)")
+    parser.add_argument("--offset-body", type=float, nargs=3, help="Body offset (x y z)")
+    parser.add_argument("--offset-arm-right", type=float, nargs=3, help="Right arm offset (x y z)")
+    parser.add_argument("--offset-arm-left", type=float, nargs=3, help="Left arm offset (x y z)")
+    parser.add_argument("--offset-leg-right", type=float, nargs=3, help="Right leg offset (x y z)")
+    parser.add_argument("--offset-leg-left", type=float, nargs=3, help="Left leg offset (x y z)")
+    
     parser.add_argument("--save", type=str, help="Save screenshot to file")
     parser.add_argument("--bg", type=float, nargs=3, default=[1/255, 254/255, 1/255], help="Background color (r g b)")
     parser.add_argument("--light-pos", type=float, nargs=3, default=[0, 30, 30], help="Initial light position (x y z)")
@@ -806,6 +836,14 @@ def main():
     if args.pos_leg_right: pos_args['right_leg'] = tuple(args.pos_leg_right)
     if args.pos_leg_left: pos_args['left_leg'] = tuple(args.pos_leg_left)
     
+    offset_args = {}
+    if args.offset_head: offset_args['head'] = tuple(args.offset_head)
+    if args.offset_body: offset_args['body'] = tuple(args.offset_body)
+    if args.offset_arm_right: offset_args['right_arm'] = tuple(args.offset_arm_right)
+    if args.offset_arm_left: offset_args['left_arm'] = tuple(args.offset_arm_left)
+    if args.offset_leg_right: offset_args['right_leg'] = tuple(args.offset_leg_right)
+    if args.offset_leg_left: offset_args['left_leg'] = tuple(args.offset_leg_left)
+    
     from .ensure_skin64x64 import convert_skin_64x32_to_64x64
     
     skin_img = Image.open(args.skin_path).convert("RGBA")
@@ -820,6 +858,7 @@ def main():
         ortho=args.ortho, 
         rot_args=rot_args, 
         pos_args=pos_args, 
+        offset_args=offset_args,
         save_path=args.save, 
         bg=args.bg, 
         light=args.light,

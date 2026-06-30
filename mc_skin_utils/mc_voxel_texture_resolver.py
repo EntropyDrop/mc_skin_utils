@@ -5,7 +5,6 @@ import numpy as np
 
 def resolve_voxel_consistency(img):
     is_slim = img.getpixel((47,52))[3] == 0
-    print('is_slim', is_slim)
     for part_idx, part in enumerate([
             # head
             [
